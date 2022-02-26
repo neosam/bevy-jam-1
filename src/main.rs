@@ -85,6 +85,8 @@ pub struct ScoredEvent {
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum GameState {
     InGame,
+    Won,
+    Lost,
 }
 
 #[derive(Default)]
@@ -273,6 +275,26 @@ pub fn setup_system(mut commands: Commands) {
     commands.insert_resource(digit_shapes);
 }
 
+pub fn setup_system_won(
+    mut commands: Commands,
+    query: Query<Entity>,
+) {
+    bevy::log::info!("You have won!");
+    for entity in query.iter() {
+        commands.entity(entity).despawn();
+    }
+}
+
+pub fn setup_system_lost(
+    mut commands: Commands,
+    query: Query<Entity>,
+) {
+    bevy::log::info!("You have lost!");
+    for entity in query.iter() {
+        commands.entity(entity).despawn();
+    }
+}
+
 pub fn user_input_system(
     mut query: Query<&mut Velocity, With<Player>>,
     keyboard: Res<Input<KeyCode>>,
@@ -428,6 +450,7 @@ pub fn score_system(
     mut right_query: Query<&mut Path, (With<RightScoreUI>, Without<LeftScoreUI>)>,
     mut score_event_reader: EventReader<ScoredEvent>,
     mut score: ResMut<Score>,
+    mut state: ResMut<State<GameState>>,
     digit_shapes: Res<DigitShapes>,
 ) {
     let mut changed = false;
@@ -436,9 +459,15 @@ pub fn score_system(
         match event.side {
             Side::Left => {
                 score.left += 1;
+                if score.left >= 10 {
+                    state.replace(GameState::Won);
+                }
             },
             Side::Right => {
                 score.right += 1;
+                if score.right >= 10 {
+                    state.replace(GameState::Lost);
+                }
             },
         };
         let ball_shape = shapes::Rectangle {
@@ -493,5 +522,7 @@ fn main() {
                 .with_system(keep_paddle_in_screen_system)
                 .with_system(ai_system)
         )
+        .add_system_set(SystemSet::on_enter(GameState::Won).with_system(setup_system_won))
+        .add_system_set(SystemSet::on_enter(GameState::Lost).with_system(setup_system_lost))
         .run();
 }
