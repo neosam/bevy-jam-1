@@ -312,7 +312,6 @@ pub fn ai_system(
             }
         });
     if let Some((_, ball_y)) = most_relevant_ball {
-        bevy::log::info!("Ball: {ball_y}");
         for (mut velocity, transform) in ai_query.iter_mut() {
             if ball_y < transform.translation.y {
                 velocity.velocity.y = (-PEDAL_MAX_SPEED).max(velocity.velocity.y - PEDAL_ACCELERATION * time.delta_seconds());
@@ -358,15 +357,13 @@ pub fn ball_bounds_check_system(
         }
         if transform.translation.x < X_BOUNDS_LEFT {
             transform.translation.x = 0.0;
-            transform.translation.y = 0.0;
             velocity.velocity.x = INIT_VELOCITY_X;
             velocity.velocity.y = INIT_VELOCITY_Y;
             score_event_writer.send(ScoredEvent { side: Side::Right });
         }
         if transform.translation.x > X_BOUNDS_RIGHT {
             transform.translation.x = 0.0;
-            transform.translation.y = 0.0;
-            velocity.velocity.x = -INIT_VELOCITY_X;
+            velocity.velocity.x = INIT_VELOCITY_X;
             velocity.velocity.y = INIT_VELOCITY_Y;
             score_event_writer.send(ScoredEvent { side: Side::Left });
         }
@@ -426,6 +423,7 @@ pub fn keep_paddle_in_screen_system(
 }
 
 pub fn score_system(
+    mut commands: Commands,
     mut left_query: Query<&mut Path, (With<LeftScoreUI>, Without<RightScoreUI>)>,
     mut right_query: Query<&mut Path, (With<RightScoreUI>, Without<LeftScoreUI>)>,
     mut score_event_reader: EventReader<ScoredEvent>,
@@ -442,7 +440,22 @@ pub fn score_system(
             Side::Right => {
                 score.right += 1;
             },
-        }
+        };
+        let ball_shape = shapes::Rectangle {
+            extents: Vec2::new(5.0, 5.0),
+            origin: RectangleOrigin::Center,
+        };
+        commands
+            .spawn_bundle(GeometryBuilder::build_as(
+                &ball_shape,
+                DrawMode::Fill(FillMode::color(Color::WHITE)),
+                Transform::from_xyz(0.0, 0.0, 100.0),
+            ))
+            .insert(Velocity {
+                velocity: Vec2::new(-INIT_VELOCITY_X, INIT_VELOCITY_Y),
+            })
+            .insert(Collider::new(5.0, 5.0))
+            .insert(Ball);
     }
     if changed {
         if let Ok(mut left_digit_path) = left_query.get_single_mut() {
@@ -458,7 +471,7 @@ fn main() {
     App::new()
         .insert_resource(Msaa { samples: 4 })
         .insert_resource(WindowDescriptor {
-            title: "Unfair Pong".to_string(),
+            title: "Unfair Stupid Multiball Pong".to_string(),
             width: 1000.0,
             height: 600.0,
             ..Default::default()
