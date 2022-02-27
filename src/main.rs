@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use bevy_prototype_lyon::{prelude::*, shapes::Polygon};
 use bevy_prototype_lyon::entity::Path;
+use bevy_prototype_lyon::{prelude::*, shapes::Polygon};
 
 const X_BOUNDS_LEFT: f32 = -500.0;
 const X_BOUNDS_RIGHT: f32 = 500.0;
@@ -12,6 +12,7 @@ const PEDAL_MAX_SPEED: f32 = 400.0;
 const BOUNCE_ACCELERATION: f32 = 1.1;
 const INIT_VELOCITY_X: f32 = 120.0;
 const INIT_VELOCITY_Y: f32 = 90.0;
+const MAX_BALLS: usize = 4;
 
 #[derive(Component)]
 pub enum Side {
@@ -48,7 +49,9 @@ pub struct Collider {
 }
 impl Collider {
     pub fn new(x: f32, y: f32) -> Self {
-        Collider { dimension: Vec2::new(x, y) }
+        Collider {
+            dimension: Vec2::new(x, y),
+        }
     }
     pub fn left(&self, transform: &Transform) -> f32 {
         transform.translation.x - self.dimension.x
@@ -63,11 +66,11 @@ impl Collider {
         transform.translation.y - self.dimension.y
     }
     pub fn add(&self, other: &Collider) -> Collider {
-        Collider { 
+        Collider {
             dimension: Vec2::new(
                 self.dimension.x + other.dimension.x,
-                self.dimension.y + other.dimension.y
-            )
+                self.dimension.y + other.dimension.y,
+            ),
         }
     }
 }
@@ -101,111 +104,110 @@ pub struct DigitShapes {
 }
 
 pub fn generate_digit_shapes(size: f32) -> DigitShapes {
-    DigitShapes { shapes: [
-        Polygon {
-            points: vec![
-                Vec2::new(size, size),
-                Vec2::new(-size, size),
-                Vec2::new(-size, -size),
-                Vec2::new(size, -size),
-                Vec2::new(size, size),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(0.0, size),
-                Vec2::new(0.0, -size),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(-size, size),
-                Vec2::new(size, size),
-                Vec2::new(size, 0.0),
-                Vec2::new(-size, 0.0),
-                Vec2::new(-size, -size),
-                Vec2::new(size, -size),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(-size, size),
-                Vec2::new(size, size),
-                Vec2::new(size, 0.0),
-                Vec2::new(-size, 0.0),
-                Vec2::new(size, 0.0),
-                Vec2::new(size, -size),
-                Vec2::new(-size, -size),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(-size, size),
-                Vec2::new(-size, 0.0),
-                Vec2::new(size, 0.0),
-                Vec2::new(size, size),
-                Vec2::new(size, -size),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(size, size),
-                Vec2::new(-size, size),
-                Vec2::new(-size, 0.0),
-                Vec2::new(size, 0.0),
-                Vec2::new(size, -size),
-                Vec2::new(-size, -size),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(size, size),
-                Vec2::new(-size, size),
-                Vec2::new(-size, -size),
-                Vec2::new(size, -size),
-                Vec2::new(size, 0.0),
-                Vec2::new(-size, 0.0),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(-size, size),
-                Vec2::new(size, size),
-                Vec2::new(size, -size),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(-size, size),
-                Vec2::new(size, size),
-                Vec2::new(size, -size),
-                Vec2::new(-size, -size),
-                Vec2::new(-size, size),
-                Vec2::new(-size, 0.0),
-                Vec2::new(size, 0.0),
-            ],
-            closed: false,
-        },
-        Polygon {
-            points: vec![
-                Vec2::new(-size, -size),
-                Vec2::new(size, -size),
-                Vec2::new(size, size),
-                Vec2::new(-size, size),
-                Vec2::new(-size, 0.0),
-                Vec2::new(size, 0.0),
-            ],
-            closed: false,
-        },
-    ]}
+    DigitShapes {
+        shapes: [
+            Polygon {
+                points: vec![
+                    Vec2::new(size, size),
+                    Vec2::new(-size, size),
+                    Vec2::new(-size, -size),
+                    Vec2::new(size, -size),
+                    Vec2::new(size, size),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![Vec2::new(0.0, size), Vec2::new(0.0, -size)],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(-size, size),
+                    Vec2::new(size, size),
+                    Vec2::new(size, 0.0),
+                    Vec2::new(-size, 0.0),
+                    Vec2::new(-size, -size),
+                    Vec2::new(size, -size),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(-size, size),
+                    Vec2::new(size, size),
+                    Vec2::new(size, 0.0),
+                    Vec2::new(-size, 0.0),
+                    Vec2::new(size, 0.0),
+                    Vec2::new(size, -size),
+                    Vec2::new(-size, -size),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(-size, size),
+                    Vec2::new(-size, 0.0),
+                    Vec2::new(size, 0.0),
+                    Vec2::new(size, size),
+                    Vec2::new(size, -size),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(size, size),
+                    Vec2::new(-size, size),
+                    Vec2::new(-size, 0.0),
+                    Vec2::new(size, 0.0),
+                    Vec2::new(size, -size),
+                    Vec2::new(-size, -size),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(size, size),
+                    Vec2::new(-size, size),
+                    Vec2::new(-size, -size),
+                    Vec2::new(size, -size),
+                    Vec2::new(size, 0.0),
+                    Vec2::new(-size, 0.0),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(-size, size),
+                    Vec2::new(size, size),
+                    Vec2::new(size, -size),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(-size, size),
+                    Vec2::new(size, size),
+                    Vec2::new(size, -size),
+                    Vec2::new(-size, -size),
+                    Vec2::new(-size, size),
+                    Vec2::new(-size, 0.0),
+                    Vec2::new(size, 0.0),
+                ],
+                closed: false,
+            },
+            Polygon {
+                points: vec![
+                    Vec2::new(-size, -size),
+                    Vec2::new(size, -size),
+                    Vec2::new(size, size),
+                    Vec2::new(-size, size),
+                    Vec2::new(-size, 0.0),
+                    Vec2::new(size, 0.0),
+                ],
+                closed: false,
+            },
+        ],
+    }
 }
 
 pub fn setup_system(mut commands: Commands) {
@@ -225,27 +227,29 @@ pub fn setup_system(mut commands: Commands) {
         origin: RectangleOrigin::Center,
     };
 
-    commands.spawn_bundle(GeometryBuilder::build_as(
-        &pedal_left_shape,
-        DrawMode::Fill(FillMode::color(Color::WHITE)),
-        Transform::from_xyz(-450.0, 0.0, 100.0),
-    ))
-    .insert(Player)
-    .insert(Paddle)
-    .insert(Side::Left)
-    .insert(Velocity::new(0.0, 0.0))
-    .insert(Collider::new(5.0, 15.0));
+    commands
+        .spawn_bundle(GeometryBuilder::build_as(
+            &pedal_left_shape,
+            DrawMode::Fill(FillMode::color(Color::WHITE)),
+            Transform::from_xyz(-450.0, 0.0, 100.0),
+        ))
+        .insert(Player)
+        .insert(Paddle)
+        .insert(Side::Left)
+        .insert(Velocity::new(0.0, 0.0))
+        .insert(Collider::new(5.0, 15.0));
 
-    commands.spawn_bundle(GeometryBuilder::build_as(
-        &pedal_right_shape,
-        DrawMode::Fill(FillMode::color(Color::WHITE)),
-        Transform::from_xyz(450.0, 0.0, 100.0),
-    ))
-    .insert(Side::Right)
-    .insert(Paddle)
-    .insert(AI)
-    .insert(Velocity::new(0.0, 0.0))
-    .insert(Collider::new(5.0, 50.0));
+    commands
+        .spawn_bundle(GeometryBuilder::build_as(
+            &pedal_right_shape,
+            DrawMode::Fill(FillMode::color(Color::WHITE)),
+            Transform::from_xyz(450.0, 0.0, 100.0),
+        ))
+        .insert(Side::Right)
+        .insert(Paddle)
+        .insert(AI)
+        .insert(Velocity::new(0.0, 0.0))
+        .insert(Collider::new(5.0, 50.0));
 
     commands
         .spawn_bundle(GeometryBuilder::build_as(
@@ -258,37 +262,35 @@ pub fn setup_system(mut commands: Commands) {
         })
         .insert(Collider::new(5.0, 5.0))
         .insert(Ball);
-    
+
     let digit_shapes = generate_digit_shapes(50.0);
-    commands.spawn_bundle(GeometryBuilder::build_as(
-        &digit_shapes.shapes[0],
-        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(-100.0, 200.0, 1.0)
-    )).insert(LeftScoreUI);
-    commands.spawn_bundle(GeometryBuilder::build_as(
-        &digit_shapes.shapes[0],
-        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(100.0, 200.0, 1.0)
-    )).insert(RightScoreUI);
+    commands
+        .spawn_bundle(GeometryBuilder::build_as(
+            &digit_shapes.shapes[0],
+            DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+            Transform::from_xyz(-100.0, 200.0, 1.0),
+        ))
+        .insert(LeftScoreUI);
+    commands
+        .spawn_bundle(GeometryBuilder::build_as(
+            &digit_shapes.shapes[0],
+            DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+            Transform::from_xyz(100.0, 200.0, 1.0),
+        ))
+        .insert(RightScoreUI);
 
     commands.insert_resource(Score::default());
     commands.insert_resource(digit_shapes);
 }
 
-pub fn setup_system_won(
-    mut commands: Commands,
-    query: Query<Entity>,
-) {
+pub fn setup_system_won(mut commands: Commands, query: Query<Entity>) {
     bevy::log::info!("You have won!");
     for entity in query.iter() {
         commands.entity(entity).despawn();
     }
 }
 
-pub fn setup_system_lost(
-    mut commands: Commands,
-    query: Query<Entity>,
-) {
+pub fn setup_system_lost(mut commands: Commands, query: Query<Entity>) {
     bevy::log::info!("You have lost!");
     for entity in query.iter() {
         commands.entity(entity).despawn();
@@ -302,15 +304,19 @@ pub fn user_input_system(
 ) {
     for mut velocity in query.iter_mut() {
         if keyboard.pressed(KeyCode::W) {
-            velocity.velocity.y = PEDAL_MAX_SPEED.min(velocity.velocity.y + PEDAL_ACCELERATION * time.delta_seconds());
+            velocity.velocity.y = PEDAL_MAX_SPEED
+                .min(velocity.velocity.y + PEDAL_ACCELERATION * time.delta_seconds());
         }
         if keyboard.pressed(KeyCode::S) {
-            velocity.velocity.y = (-PEDAL_MAX_SPEED).max(velocity.velocity.y - PEDAL_ACCELERATION * time.delta_seconds());
+            velocity.velocity.y = (-PEDAL_MAX_SPEED)
+                .max(velocity.velocity.y - PEDAL_ACCELERATION * time.delta_seconds());
         }
         if velocity.velocity.y > 0.0 {
-            velocity.velocity.y = 0.0f32.max(velocity.velocity.y - PEDAL_BREAK * time.delta_seconds());
+            velocity.velocity.y =
+                0.0f32.max(velocity.velocity.y - PEDAL_BREAK * time.delta_seconds());
         } else if velocity.velocity.y < 0.0 {
-            velocity.velocity.y = 0.0f32.min(velocity.velocity.y + PEDAL_BREAK * time.delta_seconds());
+            velocity.velocity.y =
+                0.0f32.min(velocity.velocity.y + PEDAL_BREAK * time.delta_seconds());
         }
     }
 }
@@ -321,15 +327,12 @@ pub fn ai_system(
     time: Res<Time>,
 ) {
     for (mut velocity, transform) in ai_query.iter_mut() {
-        let ai_x = transform.translation.x;
-        let ai_y = transform.translation.y;
-        let most_relevant_ball = ball_query.iter()
+        let most_relevant_ball = ball_query
+            .iter()
             .map(|ball_transform| (ball_transform.translation.x, ball_transform.translation.y))
             .fold(None, |acc, (x, y)| {
-                let distance_x = (ai_x - x).abs();
-                let distance_y = (ai_y - y).abs();
                 if let Some((acc_x, acc_y)) = acc {
-                    if /*distance_y * 2.0 - 10.0 < distance_x &&*/ x > acc_x {
+                    if x > acc_x {
                         Some((x, y))
                     } else {
                         Some((acc_x, acc_y))
@@ -340,24 +343,24 @@ pub fn ai_system(
             });
         if let Some((_, ball_y)) = most_relevant_ball {
             if ball_y < transform.translation.y {
-                velocity.velocity.y = (-PEDAL_MAX_SPEED).max(velocity.velocity.y - PEDAL_ACCELERATION * time.delta_seconds());
+                velocity.velocity.y = (-PEDAL_MAX_SPEED)
+                    .max(velocity.velocity.y - PEDAL_ACCELERATION * time.delta_seconds());
             } else {
-                velocity.velocity.y = PEDAL_MAX_SPEED.min(velocity.velocity.y + PEDAL_ACCELERATION * time.delta_seconds());
+                velocity.velocity.y = PEDAL_MAX_SPEED
+                    .min(velocity.velocity.y + PEDAL_ACCELERATION * time.delta_seconds());
             }
             if velocity.velocity.y > 0.0 {
-                velocity.velocity.y = 0.0f32.max(velocity.velocity.y - PEDAL_BREAK * time.delta_seconds());
+                velocity.velocity.y =
+                    0.0f32.max(velocity.velocity.y - PEDAL_BREAK * time.delta_seconds());
             } else if velocity.velocity.y < 0.0 {
-                velocity.velocity.y = 0.0f32.min(velocity.velocity.y + PEDAL_BREAK * time.delta_seconds());
+                velocity.velocity.y =
+                    0.0f32.min(velocity.velocity.y + PEDAL_BREAK * time.delta_seconds());
             }
         }
     }
 }
 
-
-pub fn movement_system(
-    mut query: Query<(&Velocity, &mut Transform)>,
-    time: Res<Time>,
-) {
+pub fn movement_system(mut query: Query<(&Velocity, &mut Transform)>, time: Res<Time>) {
     for (velocity, mut transform) in query.iter_mut() {
         transform.translation.x += velocity.velocity.x * time.delta_seconds();
         transform.translation.y += velocity.velocity.y * time.delta_seconds();
@@ -412,20 +415,25 @@ pub fn paddle_collision_system(
             let most_top = ball_top.max(pedal_collider.top(pedal_transform));
             let most_bottom = ball_bottom.min(pedal_collider.bottom(pedal_transform));
             if combined_colliders.dimension.x * 2.0 > most_right - most_left
-                    && combined_colliders.dimension.y * 2.0 > most_top - most_bottom {
-                let reflection_angle =
-                    (pedal_transform.translation.y - ball_transform.translation.y)
-                        / combined_colliders.dimension.y * std::f32::consts::PI / 4.0;
-                let new_velocity_x = reflection_angle.cos() * ball_velocity.velocity.length() * BOUNCE_ACCELERATION;
-                let new_velocity_y = -reflection_angle.sin() * ball_velocity.velocity.length() * BOUNCE_ACCELERATION;
-                
+                && combined_colliders.dimension.y * 2.0 > most_top - most_bottom
+            {
+                let reflection_angle = (pedal_transform.translation.y
+                    - ball_transform.translation.y)
+                    / combined_colliders.dimension.y
+                    * std::f32::consts::PI
+                    / 4.0;
+                let new_velocity_x =
+                    reflection_angle.cos() * ball_velocity.velocity.length() * BOUNCE_ACCELERATION;
+                let new_velocity_y =
+                    -reflection_angle.sin() * ball_velocity.velocity.length() * BOUNCE_ACCELERATION;
+
                 match *pedal_side {
                     Side::Left => {
                         if ball_velocity.velocity.x < 0.0 {
                             ball_velocity.velocity.x = new_velocity_x;
                             ball_velocity.velocity.y = new_velocity_y;
                         }
-                    },
+                    }
                     Side::Right => {
                         if ball_velocity.velocity.x > 0.0 {
                             ball_velocity.velocity.x = -new_velocity_x;
@@ -457,6 +465,7 @@ pub fn score_system(
     mut commands: Commands,
     mut left_query: Query<&mut Path, (With<LeftScoreUI>, Without<RightScoreUI>)>,
     mut right_query: Query<&mut Path, (With<RightScoreUI>, Without<LeftScoreUI>)>,
+    balls_query: Query<&Ball>,
     mut score_event_reader: EventReader<ScoredEvent>,
     mut score: ResMut<Score>,
     mut state: ResMut<State<GameState>>,
@@ -469,38 +478,46 @@ pub fn score_system(
             Side::Left => {
                 score.left += 1;
                 if score.left >= 10 {
-                    state.replace(GameState::Won);
+                    state
+                        .replace(GameState::Won)
+                        .expect("Could not switch to winning state");
                 }
-            },
+            }
             Side::Right => {
                 score.right += 1;
                 if score.right >= 10 {
-                    state.replace(GameState::Lost);
+                    state
+                        .replace(GameState::Lost)
+                        .expect("Could not switch to loosing state");
                 }
-            },
+            }
         };
         let ball_shape = shapes::Rectangle {
             extents: Vec2::new(5.0, 5.0),
             origin: RectangleOrigin::Center,
         };
-        commands
-            .spawn_bundle(GeometryBuilder::build_as(
-                &ball_shape,
-                DrawMode::Fill(FillMode::color(Color::WHITE)),
-                Transform::from_xyz(0.0, 0.0, 100.0),
-            ))
-            .insert(Velocity {
-                velocity: Vec2::new(-INIT_VELOCITY_X, INIT_VELOCITY_Y),
-            })
-            .insert(Collider::new(5.0, 5.0))
-            .insert(Ball);
+        if balls_query.iter().len() < MAX_BALLS {
+            commands
+                .spawn_bundle(GeometryBuilder::build_as(
+                    &ball_shape,
+                    DrawMode::Fill(FillMode::color(Color::WHITE)),
+                    Transform::from_xyz(0.0, 0.0, 100.0),
+                ))
+                .insert(Velocity {
+                    velocity: Vec2::new(-INIT_VELOCITY_X, INIT_VELOCITY_Y),
+                })
+                .insert(Collider::new(5.0, 5.0))
+                .insert(Ball);
+        }
     }
     if changed {
         if let Ok(mut left_digit_path) = left_query.get_single_mut() {
-            *left_digit_path = ShapePath::build_as(&digit_shapes.shapes[(score.left % 10) as usize]);
+            *left_digit_path =
+                ShapePath::build_as(&digit_shapes.shapes[(score.left % 10) as usize]);
         }
         if let Ok(mut right_digit_path) = right_query.get_single_mut() {
-            *right_digit_path = ShapePath::build_as(&digit_shapes.shapes[(score.right % 10) as usize]);
+            *right_digit_path =
+                ShapePath::build_as(&digit_shapes.shapes[(score.right % 10) as usize]);
         }
     }
 }
@@ -517,9 +534,7 @@ fn main() {
         .add_state(GameState::InGame)
         .add_plugins(DefaultPlugins)
         .add_plugin(ShapePlugin)
-
         .add_event::<ScoredEvent>()
-
         .add_system_set(SystemSet::on_enter(GameState::InGame).with_system(setup_system))
         .add_system_set(
             SystemSet::on_update(GameState::InGame)
@@ -529,7 +544,7 @@ fn main() {
                 .with_system(paddle_collision_system)
                 .with_system(score_system)
                 .with_system(keep_paddle_in_screen_system)
-                .with_system(ai_system)
+                .with_system(ai_system),
         )
         .add_system_set(SystemSet::on_enter(GameState::Won).with_system(setup_system_won))
         .add_system_set(SystemSet::on_enter(GameState::Lost).with_system(setup_system_lost))
