@@ -9,7 +9,7 @@ const Y_BOUNDS_BOTTOM: f32 = -300.0;
 const PEDAL_ACCELERATION: f32 = 1500.0;
 const PEDAL_BREAK: f32 = 900.0;
 const PEDAL_MAX_SPEED: f32 = 400.0;
-const BOUCE_ACCELERATION: f32 = 1.1;
+const BOUNCE_ACCELERATION: f32 = 1.1;
 const INIT_VELOCITY_X: f32 = 120.0;
 const INIT_VELOCITY_Y: f32 = 90.0;
 
@@ -213,11 +213,11 @@ pub fn setup_system(mut commands: Commands) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
     let pedal_left_shape = shapes::Rectangle {
-        extents: Vec2::new(5.0, 80.0),
+        extents: Vec2::new(5.0, 20.0),
         origin: RectangleOrigin::Center,
     };
     let pedal_right_shape = shapes::Rectangle {
-        extents: Vec2::new(5.0, 20.0),
+        extents: Vec2::new(5.0, 100.0),
         origin: RectangleOrigin::Center,
     };
     let ball_shape = shapes::Rectangle {
@@ -234,7 +234,7 @@ pub fn setup_system(mut commands: Commands) {
     .insert(Paddle)
     .insert(Side::Left)
     .insert(Velocity::new(0.0, 0.0))
-    .insert(Collider::new(5.0, 45.0));
+    .insert(Collider::new(5.0, 15.0));
 
     commands.spawn_bundle(GeometryBuilder::build_as(
         &pedal_right_shape,
@@ -245,7 +245,7 @@ pub fn setup_system(mut commands: Commands) {
     .insert(Paddle)
     .insert(AI)
     .insert(Velocity::new(0.0, 0.0))
-    .insert(Collider::new(5.0, 15.0));
+    .insert(Collider::new(5.0, 50.0));
 
     commands
         .spawn_bundle(GeometryBuilder::build_as(
@@ -320,21 +320,25 @@ pub fn ai_system(
     ball_query: Query<&Transform, With<Ball>>,
     time: Res<Time>,
 ) {
-    let most_relevant_ball = ball_query.iter()
-        .map(|transform| (transform.translation.x, transform.translation.y))
-        .fold(None, |acc, (x, y)| {
-            if let Some((acc_x, acc_y)) = acc {
-                if x > acc_x {
-                    Some((x, y))
+    for (mut velocity, transform) in ai_query.iter_mut() {
+        let ai_x = transform.translation.x;
+        let ai_y = transform.translation.y;
+        let most_relevant_ball = ball_query.iter()
+            .map(|ball_transform| (ball_transform.translation.x, ball_transform.translation.y))
+            .fold(None, |acc, (x, y)| {
+                let distance_x = (ai_x - x).abs();
+                let distance_y = (ai_y - y).abs();
+                if let Some((acc_x, acc_y)) = acc {
+                    if /*distance_y * 2.0 - 10.0 < distance_x &&*/ x > acc_x {
+                        Some((x, y))
+                    } else {
+                        Some((acc_x, acc_y))
+                    }
                 } else {
-                    Some((acc_x, acc_y))
+                    Some((x, y))
                 }
-            } else {
-                Some((x, y))
-            }
-        });
-    if let Some((_, ball_y)) = most_relevant_ball {
-        for (mut velocity, transform) in ai_query.iter_mut() {
+            });
+        if let Some((_, ball_y)) = most_relevant_ball {
             if ball_y < transform.translation.y {
                 velocity.velocity.y = (-PEDAL_MAX_SPEED).max(velocity.velocity.y - PEDAL_ACCELERATION * time.delta_seconds());
             } else {
@@ -409,18 +413,23 @@ pub fn paddle_collision_system(
             let most_bottom = ball_bottom.min(pedal_collider.bottom(pedal_transform));
             if combined_colliders.dimension.x * 2.0 > most_right - most_left
                     && combined_colliders.dimension.y * 2.0 > most_top - most_bottom {
-                bevy::log::info!("Collision detected {most_left} {most_right} {most_top} {most_bottom}");
+                let reflection_angle =
+                    (pedal_transform.translation.y - ball_transform.translation.y)
+                        / combined_colliders.dimension.y * std::f32::consts::PI / 4.0;
+                let new_velocity_x = reflection_angle.cos() * ball_velocity.velocity.length() * BOUNCE_ACCELERATION;
+                let new_velocity_y = -reflection_angle.sin() * ball_velocity.velocity.length() * BOUNCE_ACCELERATION;
+                
                 match *pedal_side {
                     Side::Left => {
                         if ball_velocity.velocity.x < 0.0 {
-                            ball_velocity.velocity.x *= -BOUCE_ACCELERATION;
-                            ball_velocity.velocity.y *= BOUCE_ACCELERATION;
+                            ball_velocity.velocity.x = new_velocity_x;
+                            ball_velocity.velocity.y = new_velocity_y;
                         }
                     },
                     Side::Right => {
                         if ball_velocity.velocity.x > 0.0 {
-                            ball_velocity.velocity.x *= -BOUCE_ACCELERATION;
-                            ball_velocity.velocity.y *= BOUCE_ACCELERATION;
+                            ball_velocity.velocity.x = -new_velocity_x;
+                            ball_velocity.velocity.y = new_velocity_y;
                         }
                     }
                 }
@@ -500,7 +509,7 @@ fn main() {
     App::new()
         .insert_resource(Msaa { samples: 4 })
         .insert_resource(WindowDescriptor {
-            title: "Unfair Stupid Multiball Pong".to_string(),
+            title: "Such an unfair Multiball Pong!  My paddle is too small!!!1".to_string(),
             width: 1000.0,
             height: 600.0,
             ..Default::default()
