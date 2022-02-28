@@ -1,23 +1,10 @@
 use bevy::prelude::*;
-use bevy_prototype_lyon::entity::Path;
-use bevy_prototype_lyon::{prelude::*, shapes::Polygon};
+use bevy_prototype_lyon::prelude::*;
 
 mod component;
 mod resource;
 mod shapes;
 mod system;
-
-const X_BOUNDS_LEFT: f32 = -500.0;
-const X_BOUNDS_RIGHT: f32 = 500.0;
-const Y_BOUNDS_TOP: f32 = 300.0;
-const Y_BOUNDS_BOTTOM: f32 = -300.0;
-const PEDAL_ACCELERATION: f32 = 1500.0;
-const PEDAL_BREAK: f32 = 900.0;
-const PEDAL_MAX_SPEED: f32 = 400.0;
-const BOUNCE_ACCELERATION: f32 = 1.1;
-const INIT_VELOCITY_X: f32 = 120.0;
-const INIT_VELOCITY_Y: f32 = 90.0;
-const MAX_BALLS: usize = 4;
 
 
 pub struct ScoredEvent {

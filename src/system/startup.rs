@@ -7,6 +7,7 @@ use crate::shapes as gameshapes;
 
 pub fn setup(mut commands: Commands) {
     bevy::log::info!("Initialize");
+    let game_globals = resource::GameGlobals::new();
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
     let pedal_left_shape = shapes::Rectangle {
@@ -53,7 +54,7 @@ pub fn setup(mut commands: Commands) {
             Transform::from_xyz(0.0, 0.0, 100.0),
         ))
         .insert(component::Velocity {
-            velocity: Vec2::new(-crate::INIT_VELOCITY_X, crate::INIT_VELOCITY_Y),
+            velocity: game_globals.ball_init_velocity.clone(),
         })
         .insert(component::Collider::new(5.0, 5.0))
         .insert(component::Ball);
@@ -76,6 +77,7 @@ pub fn setup(mut commands: Commands) {
 
     commands.insert_resource(resource::Score::default());
     commands.insert_resource(digit_shapes);
+    commands.insert_resource(resource::GameGlobals::new());
 }
 
 pub fn setup_won(mut commands: Commands, query: Query<Entity>) {

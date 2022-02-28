@@ -1,33 +1,33 @@
 use bevy::prelude::*;
 use crate::component;
+use crate::resource;
 
 pub fn ball_bounds_check(
     mut query: Query<(&mut component::Velocity, &mut Transform), With<component::Ball>>,
     mut score_event_writer: EventWriter<crate::ScoredEvent>,
+    game_globals: Res<resource::GameGlobals>,
 ) {
     for (mut velocity, mut transform) in query.iter_mut() {
-        if transform.translation.y < crate::Y_BOUNDS_BOTTOM {
-            transform.translation.y = crate::Y_BOUNDS_BOTTOM;
+        if transform.translation.y < game_globals.bounds_bottom {
+            transform.translation.y = game_globals.bounds_bottom;
             if velocity.velocity.y < 0.0 {
                 velocity.velocity.y *= -1.0;
             }
         }
-        if transform.translation.y > crate::Y_BOUNDS_TOP {
-            transform.translation.y = crate::Y_BOUNDS_TOP;
+        if transform.translation.y > game_globals.bounds_top {
+            transform.translation.y = game_globals.bounds_top;
             if velocity.velocity.y > 0.0 {
                 velocity.velocity.y *= -1.0;
             }
         }
-        if transform.translation.x < crate::X_BOUNDS_LEFT {
+        if transform.translation.x < game_globals.bounds_left {
             transform.translation.x = 0.0;
-            velocity.velocity.x = crate::INIT_VELOCITY_X;
-            velocity.velocity.y = crate::INIT_VELOCITY_Y;
+            velocity.velocity = game_globals.ball_init_velocity;
             score_event_writer.send(crate::ScoredEvent { side: component::Side::Right });
         }
-        if transform.translation.x > crate::X_BOUNDS_RIGHT {
+        if transform.translation.x > game_globals.bounds_right {
             transform.translation.x = 0.0;
-            velocity.velocity.x = crate::INIT_VELOCITY_X;
-            velocity.velocity.y = crate::INIT_VELOCITY_Y;
+            velocity.velocity = game_globals.ball_init_velocity;
             score_event_writer.send(crate::ScoredEvent { side: component::Side::Left });
         }
     }
@@ -36,6 +36,7 @@ pub fn ball_bounds_check(
 pub fn paddle_collision(
     mut ball_query: Query<(&mut component::Velocity, &Transform, &component::Collider), With<component::Ball>>,
     pedal_query: Query<(&Transform, &component::Side, &component::Collider), With<component::Paddle>>,
+    game_globals: Res<resource::GameGlobals>,
 ) {
     for (mut ball_velocity, ball_transform, ball_collider) in ball_query.iter_mut() {
         let ball_left = ball_collider.left(ball_transform);
@@ -57,9 +58,9 @@ pub fn paddle_collision(
                     * std::f32::consts::PI
                     / 4.0;
                 let new_velocity_x =
-                    reflection_angle.cos() * ball_velocity.velocity.length() * crate::BOUNCE_ACCELERATION;
+                    reflection_angle.cos() * ball_velocity.velocity.length() * game_globals.speed_increase_per_bounce;
                 let new_velocity_y =
-                    -reflection_angle.sin() * ball_velocity.velocity.length() * crate::BOUNCE_ACCELERATION;
+                    -reflection_angle.sin() * ball_velocity.velocity.length() * game_globals.speed_increase_per_bounce;
 
                 match *pedal_side {
                     component::Side::Left => {

@@ -11,6 +11,7 @@ pub fn score(
     mut score: ResMut<resource::Score>,
     mut state: ResMut<State<crate::GameState>>,
     digit_shapes: Res<resource::DigitShapes>,
+    game_globals: Res<resource::GameGlobals>,
 ) {
     let mut changed = false;
     for event in score_event_reader.iter() {
@@ -37,7 +38,7 @@ pub fn score(
             extents: Vec2::new(5.0, 5.0),
             origin: RectangleOrigin::Center,
         };
-        if balls_query.iter().len() < crate::MAX_BALLS {
+        if balls_query.iter().len() < game_globals.max_balls {
             commands
                 .spawn_bundle(GeometryBuilder::build_as(
                     &ball_shape,
@@ -45,7 +46,7 @@ pub fn score(
                     Transform::from_xyz(0.0, 0.0, 100.0),
                 ))
                 .insert(component::Velocity {
-                    velocity: Vec2::new(-crate::INIT_VELOCITY_X, crate::INIT_VELOCITY_Y),
+                    velocity: game_globals.ball_init_velocity * Vec2::new(-1.0, 1.0),
                 })
                 .insert(component::Collider::new(5.0, 5.0))
                 .insert(component::Ball);
