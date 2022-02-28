@@ -8,3 +8,15 @@ edition = "2021"
 [dependencies]
 bevy = "0.6"
 bevy_prototype_lyon = "0.4"
+
+# Enable optimizations for dependencies (incl. Bevy), but not for our code:
+[profile.dev.package."*"]
+opt-level = 3
+
+# Maybe also enable only a small amount of optimization for our code:
+[profile.dev]
+opt-level = 1
+
+[profile.release]
+lto = "thin"
+opt-level = "s"
