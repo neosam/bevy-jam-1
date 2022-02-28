@@ -32,6 +32,7 @@ pub fn setup(mut commands: Commands) {
         .insert(component::Player)
         .insert(component::Paddle)
         .insert(component::Side::Left)
+        .insert(component::Damping)
         .insert(component::Velocity::new(0.0, 0.0))
         .insert(component::Collider::new(5.0, 15.0));
 
@@ -44,6 +45,7 @@ pub fn setup(mut commands: Commands) {
         .insert(component::Side::Right)
         .insert(component::Paddle)
         .insert(component::AI)
+        .insert(component::Damping)
         .insert(component::Velocity::new(0.0, 0.0))
         .insert(component::Collider::new(5.0, 50.0));
 

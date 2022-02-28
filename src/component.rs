@@ -9,6 +9,9 @@ pub enum Side {
 pub struct Paddle;
 
 #[derive(Component)]
+pub struct Damping;
+
+#[derive(Component)]
 pub struct Ball;
 
 #[derive(Component)]
