@@ -34,7 +34,7 @@ impl GameGlobals {
             paddle_acceleration: 1500.0,
             paddle_break: 900.0,
             paddle_max_speed: 400.0,
-            speed_increase_per_bounce: 1.1,
+            speed_increase_per_bounce: 1.2,
             ball_init_velocity: Vec2::new(120.0, 90.0),
             max_balls: 4,
         }
