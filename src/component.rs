@@ -42,16 +42,16 @@ impl Collider {
             dimension: Vec2::new(x, y),
         }
     }
-    pub fn left(&self, transform: &Transform) -> f32 {
+    pub fn left(&self, transform: &GlobalTransform) -> f32 {
         transform.translation.x - self.dimension.x
     }
-    pub fn right(&self, transform: &Transform) -> f32 {
+    pub fn right(&self, transform: &GlobalTransform) -> f32 {
         transform.translation.x + self.dimension.x
     }
-    pub fn top(&self, transform: &Transform) -> f32 {
+    pub fn top(&self, transform: &GlobalTransform) -> f32 {
         transform.translation.y + self.dimension.y
     }
-    pub fn bottom(&self, transform: &Transform) -> f32 {
+    pub fn bottom(&self, transform: &GlobalTransform) -> f32 {
         transform.translation.y - self.dimension.y
     }
     pub fn add(&self, other: &Collider) -> Collider {

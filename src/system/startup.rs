@@ -34,7 +34,15 @@ pub fn setup(mut commands: Commands) {
         .insert(component::Side::Left)
         .insert(component::Damping)
         .insert(component::Velocity::new(0.0, 0.0))
-        .insert(component::Collider::new(5.0, 15.0));
+        .insert(component::Collider::new(5.0, 15.0))
+        .with_children(|parent| {
+            parent.spawn()
+                .insert(Transform::from_xyz(-20.0, 0.0, 0.0))
+                .insert(GlobalTransform::default())
+                .insert(component::Side::Left)
+                .insert(component::Paddle)
+                .insert(component::Collider::new(15.0, 15.0));
+        });
 
     commands
         .spawn_bundle(GeometryBuilder::build_as(

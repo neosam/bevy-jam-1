@@ -34,8 +34,8 @@ pub fn ball_bounds_check(
 }
 
 pub fn paddle_collision(
-    mut ball_query: Query<(&mut component::Velocity, &Transform, &component::Collider), With<component::Ball>>,
-    pedal_query: Query<(&Transform, &component::Side, &component::Collider), With<component::Paddle>>,
+    mut ball_query: Query<(&mut component::Velocity, &GlobalTransform, &component::Collider), With<component::Ball>>,
+    pedal_query: Query<(&GlobalTransform, &component::Side, &component::Collider), With<component::Paddle>>,
     game_globals: Res<resource::GameGlobals>,
 ) {
     for (mut ball_velocity, ball_transform, ball_collider) in ball_query.iter_mut() {
