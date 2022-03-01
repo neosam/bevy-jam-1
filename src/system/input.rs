@@ -4,9 +4,10 @@ use crate::resource;
 
 pub fn user_input(
     mut query: Query<&mut component::Velocity, With<component::Player>>,
-    keyboard: Res<Input<KeyCode>>,
+    mut keyboard: ResMut<Input<KeyCode>>,
     time: Res<Time>,
     game_globals: Res<resource::GameGlobals>,
+    mut state: ResMut<State<crate::GameState>>,
 ) {
     for mut velocity in query.iter_mut() {
         if keyboard.pressed(KeyCode::W) {
@@ -16,6 +17,13 @@ pub fn user_input(
         if keyboard.pressed(KeyCode::S) {
             velocity.velocity.y = (-game_globals.paddle_max_speed)
                 .max(velocity.velocity.y - game_globals.paddle_acceleration * time.delta_seconds());
+        }
+        if keyboard.just_pressed(KeyCode::Space) {
+            bevy::log::info!("Switch to pause state");
+            keyboard.clear();
+            if let Err(err) = state.push(crate::GameState::Pause) {
+                bevy::log::error!("Could not pause the game: {}", err);
+            }
         }
     }
 }

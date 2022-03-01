@@ -14,6 +14,7 @@ pub struct ScoredEvent {
 #[derive(Debug, Clone, Eq, PartialEq, Hash)]
 pub enum GameState {
     InGame,
+    Pause,
     Won,
     Lost,
 }
@@ -43,6 +44,7 @@ fn main() {
                 .with_system(system::keep_paddle_in_screen)
                 .with_system(system::ai),
         )
+        .add_system_set(SystemSet::on_update(GameState::Pause).with_system(system::pause))
         .add_system_set(SystemSet::on_enter(GameState::Won).with_system(system::setup_won))
         .add_system_set(SystemSet::on_enter(GameState::Lost).with_system(system::setup_lost))
         .run();

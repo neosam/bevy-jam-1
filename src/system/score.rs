@@ -19,6 +19,7 @@ pub fn score(
         match event.side {
             component::Side::Left => {
                 score.left += 1;
+                bevy::log::info!("Player scored");
                 if score.left >= 10 {
                     state
                         .replace(crate::GameState::Won)
@@ -27,6 +28,7 @@ pub fn score(
             }
             component::Side::Right => {
                 score.right += 1;
+                bevy::log::info!("AI scored");
                 if score.right >= 10 {
                     state
                         .replace(crate::GameState::Lost)
