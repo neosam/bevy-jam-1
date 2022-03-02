@@ -1,5 +1,6 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
+use crate::bundle;
 use crate::component;
 use crate::resource;
 use crate::shapes as gameshapes;
@@ -10,64 +11,12 @@ pub fn setup(mut commands: Commands) {
     let game_globals = resource::GameGlobals::new();
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
-    let pedal_left_shape = shapes::Rectangle {
-        extents: Vec2::new(5.0, 20.0),
-        origin: RectangleOrigin::Center,
-    };
-    let pedal_right_shape = shapes::Rectangle {
-        extents: Vec2::new(5.0, 100.0),
-        origin: RectangleOrigin::Center,
-    };
-    let ball_shape = shapes::Rectangle {
-        extents: Vec2::new(5.0, 5.0),
-        origin: RectangleOrigin::Center,
-    };
-
-    commands
-        .spawn_bundle(GeometryBuilder::build_as(
-            &pedal_left_shape,
-            DrawMode::Fill(FillMode::color(Color::WHITE)),
-            Transform::from_xyz(-450.0, 0.0, 100.0),
-        ))
-        .insert(component::Player)
-        .insert(component::Paddle)
-        .insert(component::Side::Left)
-        .insert(component::Damping)
-        .insert(component::Velocity::new(0.0, 0.0))
-        .insert(component::Collider::new(5.0, 15.0))
-        .with_children(|parent| {
-            parent.spawn()
-                .insert(Transform::from_xyz(-20.0, 0.0, 0.0))
-                .insert(GlobalTransform::default())
-                .insert(component::Side::Left)
-                .insert(component::Paddle)
-                .insert(component::Collider::new(15.0, 15.0));
+    commands.spawn_bundle(bundle::LeftPaddleBundle::new())
+            .with_children(|parent| {
+            parent.spawn_bundle(bundle::LeftSecondaryColliderBundle::new());
         });
-
-    commands
-        .spawn_bundle(GeometryBuilder::build_as(
-            &pedal_right_shape,
-            DrawMode::Fill(FillMode::color(Color::WHITE)),
-            Transform::from_xyz(450.0, 0.0, 100.0),
-        ))
-        .insert(component::Side::Right)
-        .insert(component::Paddle)
-        .insert(component::AI)
-        .insert(component::Damping)
-        .insert(component::Velocity::new(0.0, 0.0))
-        .insert(component::Collider::new(5.0, 50.0));
-
-    commands
-        .spawn_bundle(GeometryBuilder::build_as(
-            &ball_shape,
-            DrawMode::Fill(FillMode::color(Color::WHITE)),
-            Transform::from_xyz(0.0, 0.0, 100.0),
-        ))
-        .insert(component::Velocity {
-            velocity: game_globals.ball_init_velocity.clone(),
-        })
-        .insert(component::Collider::new(5.0, 5.0))
-        .insert(component::Ball);
+    commands.spawn_bundle(bundle::RightPaddleBundle::new());
+    commands.spawn_bundle(bundle::BallBundle::new(game_globals.ball_init_velocity));
 
     let digit_shapes = gameshapes::generate_digit_shapes(50.0);
     commands

@@ -5,6 +5,7 @@ mod component;
 mod resource;
 mod shapes;
 mod system;
+mod bundle;
 
 
 pub struct ScoredEvent {
