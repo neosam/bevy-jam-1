@@ -94,3 +94,6 @@ pub struct LeftScoreUI;
 
 #[derive(Component)]
 pub struct RightScoreUI;
+
+#[derive(Component)]
+pub struct StrengthUI;

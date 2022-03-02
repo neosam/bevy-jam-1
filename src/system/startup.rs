@@ -43,6 +43,7 @@ pub fn setup(mut commands: Commands) {
     commands.insert_resource(resource::GameGlobals::new());
 }
 
+
 pub fn setup_won(mut commands: Commands, query: Query<Entity>) {
     bevy::log::info!("You have won!");
     for entity in query.iter() {

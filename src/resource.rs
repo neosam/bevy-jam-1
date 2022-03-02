@@ -30,7 +30,7 @@ impl GameGlobals {
             bounds_left: -500.0,
             bounds_right: 500.0,
             bounds_top: 300.0,
-            bounds_bottom: -300.0,
+            bounds_bottom: -275.0,
             paddle_acceleration: 10000.0,
             paddle_break: 9000.0,
             paddle_max_speed: 400.0,

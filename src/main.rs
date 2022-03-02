@@ -31,6 +31,7 @@ pub enum GameState {
 fn main() {
     App::new()
         .insert_resource(Msaa { samples: 4 })
+        .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(WindowDescriptor {
             title: "Such an unfair Multiball Pong!  My paddle is too small!!!1".to_string(),
             width: 1000.0,
@@ -50,9 +51,14 @@ fn main() {
         .add_event::<ScoredEvent>()
         .add_event::<PaddleCollisionEvent>()
         .add_event::<StartPunchEvent>()
-        .add_system_set(SystemSet::on_enter(GameState::InGame).with_system(system::setup))
+        .add_system_set(
+            SystemSet::on_enter(GameState::InGame)
+                .with_system(system::setup)
+                .with_system(system::setup_ui)
+            )
         .add_system_set(
             SystemSet::on_update(GameState::InGame)
+                .with_system(system::update_ui)
                 .with_system(system::user_input)
                 .with_system(system::movement)
                 .with_system(system::ball_bounds_check)
@@ -62,8 +68,8 @@ fn main() {
                 .with_system(system::ai)
                 .with_system(system::punch::punch_animation)
                 .with_system(system::punch::punch_increase)
-                .with_system(system::punch::start_punch)
-                .with_system(system::punch::punch_action)
+                .with_system(system::punch::start_punch.label("start_punch"))
+                .with_system(system::punch::punch_action.before("start_punch"))
         )
         .add_system_set(SystemSet::on_update(GameState::Pause).with_system(system::pause))
         .add_system_set(SystemSet::on_enter(GameState::Won).with_system(system::setup_won))

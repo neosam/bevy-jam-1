@@ -6,6 +6,7 @@ pub mod score;
 pub mod movement;
 pub mod pause;
 pub mod punch;
+pub mod ui;
 
 pub use ai::ai;
 pub use collision::ball_bounds_check;
@@ -18,3 +19,5 @@ pub use input::user_input;
 pub use score::score;
 pub use movement::movement;
 pub use pause::pause;
+pub use ui::setup_ui;
+pub use ui::update_ui;
