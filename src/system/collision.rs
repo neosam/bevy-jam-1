@@ -37,6 +37,7 @@ pub fn paddle_collision(
     mut ball_query: Query<(&mut component::Velocity, &GlobalTransform, &component::Collider), With<component::Ball>>,
     pedal_query: Query<(&GlobalTransform, &component::Side, &component::Collider), With<component::Paddle>>,
     game_globals: Res<resource::GameGlobals>,
+    mut paddle_collision_events: EventWriter<crate::PaddleCollisionEvent>,
 ) {
     for (mut ball_velocity, ball_transform, ball_collider) in ball_query.iter_mut() {
         let ball_left = ball_collider.left(ball_transform);
@@ -67,12 +68,14 @@ pub fn paddle_collision(
                         if ball_velocity.velocity.x < 0.0 {
                             ball_velocity.velocity.x = new_velocity_x;
                             ball_velocity.velocity.y = new_velocity_y;
+                            paddle_collision_events.send(crate::PaddleCollisionEvent { side: *pedal_side });
                         }
                     }
                     component::Side::Right => {
                         if ball_velocity.velocity.x > 0.0 {
                             ball_velocity.velocity.x = -new_velocity_x;
                             ball_velocity.velocity.y = new_velocity_y;
+                            paddle_collision_events.send(crate::PaddleCollisionEvent { side: *pedal_side });
                         }
                     }
                 }

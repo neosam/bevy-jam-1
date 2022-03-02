@@ -8,6 +8,7 @@ pub fn user_input(
     time: Res<Time>,
     game_globals: Res<resource::GameGlobals>,
     mut state: ResMut<State<crate::GameState>>,
+    mut start_punch_event_writer: EventWriter<crate::StartPunchEvent>,
 ) {
     for mut velocity in query.iter_mut() {
         if keyboard.pressed(KeyCode::W) {
@@ -17,6 +18,9 @@ pub fn user_input(
         if keyboard.pressed(KeyCode::S) {
             velocity.velocity.y = (-game_globals.paddle_max_speed)
                 .max(velocity.velocity.y - game_globals.paddle_acceleration * time.delta_seconds());
+        }
+        if keyboard.just_pressed(KeyCode::D) {
+            start_punch_event_writer.send(crate::StartPunchEvent {side: component::Side::Left});
         }
         if keyboard.just_pressed(KeyCode::Space) {
             bevy::log::info!("Switch to pause state");

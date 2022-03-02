@@ -1,6 +1,7 @@
 use bevy::prelude::*;
+use bevy_inspector_egui::Inspectable;
 
-#[derive(Component, Copy, Clone)]
+#[derive(Component, Copy, Clone, PartialEq, Eq, Inspectable)]
 pub enum Side {
     Left,
     Right,
@@ -20,7 +21,7 @@ pub struct Player;
 #[derive(Component)]
 pub struct AI;
 
-#[derive(Component)]
+#[derive(Component, Inspectable)]
 pub struct Velocity {
     pub velocity: Vec2,
 }
@@ -32,7 +33,28 @@ impl Velocity {
     }
 }
 
-#[derive(Component)]
+#[derive(Component, Inspectable)]
+pub struct Punch {
+    pub strength: f32,
+    pub max_strength: f32,
+}
+impl Punch {
+    pub fn new(max_strength: f32) -> Self {
+        Punch {
+            strength: 0.0,
+            max_strength,
+        }
+    }
+}
+
+#[derive(Component, Inspectable)]
+pub struct PunchAnimation {
+    pub duration: f32,
+    pub distance: f32,
+    pub base_x: f32,
+}
+
+#[derive(Component, Inspectable)]
 pub struct Collider {
     pub dimension: Vec2,
 }
@@ -63,6 +85,9 @@ impl Collider {
         }
     }
 }
+
+#[derive(Component)]
+pub struct ColliderOnly;
 
 #[derive(Component)]
 pub struct LeftScoreUI;

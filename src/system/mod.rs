@@ -5,6 +5,7 @@ pub mod collision;
 pub mod score;
 pub mod movement;
 pub mod pause;
+pub mod punch;
 
 pub use ai::ai;
 pub use collision::ball_bounds_check;

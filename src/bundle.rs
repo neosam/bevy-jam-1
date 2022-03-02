@@ -54,12 +54,14 @@ pub struct LeftPaddleBundle {
     #[bundle]
     paddle_bundle: PaddleBundle,
     player: component::Player,
+    punch: component::Punch,
 }
 impl LeftPaddleBundle {
     pub fn new() -> Self {
         LeftPaddleBundle {
             paddle_bundle: PaddleBundle::new(component::Side::Left),
             player: component::Player,
+            punch: component::Punch::new(3.0),
         }
     }
 }
@@ -86,6 +88,7 @@ pub struct LeftSecondaryColliderBundle {
     side: component::Side,
     paddle: component::Paddle,
     collider: component::Collider,
+    collider_only: component::ColliderOnly,
 }
 impl LeftSecondaryColliderBundle {
     pub fn new() -> Self {
@@ -95,6 +98,7 @@ impl LeftSecondaryColliderBundle {
             side: component::Side::Left,
             paddle: component::Paddle,
             collider: component::Collider::new(15.0, 15.0),
+            collider_only: component::ColliderOnly,
         }
     }
 }

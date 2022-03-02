@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 bevy = "0.6"
 bevy_prototype_lyon = "0.4"
+bevy-inspector-egui = "0.8"
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
