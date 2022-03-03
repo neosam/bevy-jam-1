@@ -16,6 +16,7 @@ pub use startup::setup;
 pub use startup::setup_won;
 pub use startup::setup_lost;
 pub use input::user_input;
+pub use input::restart_on_space;
 pub use score::score;
 pub use movement::movement;
 pub use pause::pause;

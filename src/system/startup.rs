@@ -6,8 +6,11 @@ use crate::resource;
 use crate::shapes as gameshapes;
 
 
-pub fn setup(mut commands: Commands) {
+pub fn setup(mut commands: Commands, query: Query<Entity>) {
     bevy::log::info!("Initialize");
+    for entity in query.iter() {
+        commands.entity(entity).despawn();
+    }
     let game_globals = resource::GameGlobals::new();
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
@@ -49,23 +52,40 @@ pub fn setup_won(mut commands: Commands, query: Query<Entity>) {
     for entity in query.iter() {
         commands.entity(entity).despawn();
     }
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
-    let letters = crate::shapes::generate_letter_shapes(100.0);
+    let letters = crate::shapes::generate_letter_shapes(50.0);
 
     commands.spawn_bundle(GeometryBuilder::build_as(
         &letters.y,
         DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(-110.0, 200.0, 1.0),
+        Transform::from_xyz(-110.0, 110.0, 1.0),
     ));
     commands.spawn_bundle(GeometryBuilder::build_as(
         &letters.o,
         DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(-0.0, 200.0, 1.0),
+        Transform::from_xyz(-0.0, 110.0, 1.0),
     ));
     commands.spawn_bundle(GeometryBuilder::build_as(
         &letters.u,
         DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(110.0, 200.0, 1.0),
+        Transform::from_xyz(110.0, 110.0, 1.0),
+    ));
+
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.w,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-110.0, -110.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.o,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-0.0, -110.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.n,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(110.0, -110.0, 1.0),
     ));
 }
 
@@ -74,21 +94,43 @@ pub fn setup_lost(mut commands: Commands, query: Query<Entity>) {
     for entity in query.iter() {
         commands.entity(entity).despawn();
     }
-    let letters = crate::shapes::generate_letter_shapes(100.0);
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    let letters = crate::shapes::generate_letter_shapes(50.0);
 
     commands.spawn_bundle(GeometryBuilder::build_as(
         &letters.y,
         DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(-110.0, 200.0, 1.0),
+        Transform::from_xyz(-110.0, 110.0, 1.0),
     ));
     commands.spawn_bundle(GeometryBuilder::build_as(
         &letters.o,
         DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(-0.0, 200.0, 1.0),
+        Transform::from_xyz(-0.0, 110.0, 1.0),
     ));
     commands.spawn_bundle(GeometryBuilder::build_as(
         &letters.u,
         DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
-        Transform::from_xyz(110.0, 200.0, 1.0),
+        Transform::from_xyz(110.0, 110.0, 1.0),
+    ));
+
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.l,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-170.0, -110.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.o,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-60.0, -110.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.s,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(60.0, -110.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.t,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(170.0, -110.0, 1.0),
     ));
 }

@@ -31,3 +31,15 @@ pub fn user_input(
         }
     }
 }
+
+pub fn restart_on_space(
+    mut keyboard: ResMut<Input<KeyCode>>,
+    mut state: ResMut<State<crate::GameState>>,
+) {
+    if keyboard.just_pressed(KeyCode::Space) {
+        keyboard.clear();
+        if let Err(err) = state.replace(crate::GameState::InGame) {
+            bevy::log::error!("Could not restart the game: {}", err);
+        }
+    }
+}

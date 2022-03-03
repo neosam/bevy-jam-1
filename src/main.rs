@@ -73,6 +73,8 @@ fn main() {
         )
         .add_system_set(SystemSet::on_update(GameState::Pause).with_system(system::pause))
         .add_system_set(SystemSet::on_enter(GameState::Won).with_system(system::setup_won))
+        .add_system_set(SystemSet::on_update(GameState::Won).with_system(system::restart_on_space))
         .add_system_set(SystemSet::on_enter(GameState::Lost).with_system(system::setup_lost))
+        .add_system_set(SystemSet::on_update(GameState::Lost).with_system(system::restart_on_space))
         .run();
 }

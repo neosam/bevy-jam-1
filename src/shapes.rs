@@ -171,13 +171,12 @@ pub fn generate_letter_shapes(size: f32) -> resource::LetterShapes {
         },
         s: Polygon {
             points: vec![
-                Vec2::new(-size, size),
-                Vec2::new(size, size),
-                Vec2::new(size, 0.0),
-                Vec2::new(-size, 0.0),
-                Vec2::new(size, 0.0),
-                Vec2::new(size, -size),
-                Vec2::new(-size, -size),
+                    Vec2::new(size, size),
+                    Vec2::new(-size, size),
+                    Vec2::new(-size, 0.0),
+                    Vec2::new(size, 0.0),
+                    Vec2::new(size, -size),
+                    Vec2::new(-size, -size),
                 
             ],
             closed: false,
