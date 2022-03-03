@@ -49,6 +49,24 @@ pub fn setup_won(mut commands: Commands, query: Query<Entity>) {
     for entity in query.iter() {
         commands.entity(entity).despawn();
     }
+
+    let letters = crate::shapes::generate_letter_shapes(100.0);
+
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.y,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-110.0, 200.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.o,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-0.0, 200.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.u,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(110.0, 200.0, 1.0),
+    ));
 }
 
 pub fn setup_lost(mut commands: Commands, query: Query<Entity>) {
@@ -56,4 +74,21 @@ pub fn setup_lost(mut commands: Commands, query: Query<Entity>) {
     for entity in query.iter() {
         commands.entity(entity).despawn();
     }
+    let letters = crate::shapes::generate_letter_shapes(100.0);
+
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.y,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-110.0, 200.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.o,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(-0.0, 200.0, 1.0),
+    ));
+    commands.spawn_bundle(GeometryBuilder::build_as(
+        &letters.u,
+        DrawMode::Stroke(StrokeMode::color(Color::WHITE)),
+        Transform::from_xyz(110.0, 200.0, 1.0),
+    ));
 }

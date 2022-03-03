@@ -12,6 +12,17 @@ pub struct DigitShapes {
     pub shapes: [Polygon; 10],
 }
 
+pub struct LetterShapes {
+    pub y: Polygon,
+    pub o: Polygon,
+    pub u: Polygon,
+    pub w: Polygon,
+    pub n: Polygon,
+    pub l: Polygon,
+    pub s: Polygon,
+    pub t: Polygon,
+}
+
 pub struct GameGlobals {
     pub bounds_left: f32,
     pub bounds_right: f32,
