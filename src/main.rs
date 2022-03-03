@@ -1,5 +1,8 @@
 use bevy::prelude::*;
-use bevy_inspector_egui::{WorldInspectorPlugin, RegisterInspectable};
+use bevy_inspector_egui::RegisterInspectable;
+
+#[cfg(debug_assertions)]
+use bevy_inspector_egui::WorldInspectorPlugin;
 use bevy_prototype_lyon::prelude::*;
 
 mod component;
@@ -29,7 +32,8 @@ pub enum GameState {
 
 
 fn main() {
-    App::new()
+    let mut app = App::new();
+    app
         .insert_resource(Msaa { samples: 4 })
         .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(WindowDescriptor {
@@ -40,14 +44,16 @@ fn main() {
         })
         .add_state(GameState::InGame)
         .add_plugins(DefaultPlugins)
-        .add_plugin(ShapePlugin)
+        .add_plugin(ShapePlugin);
+    #[cfg(debug_assertions)]
+    app
         .add_plugin(WorldInspectorPlugin::new())
-        
         .register_inspectable::<component::Velocity>()
         .register_inspectable::<component::Punch>()
         .register_inspectable::<component::PunchAnimation>()
-        .register_inspectable::<component::Collider>()
-        
+        .register_inspectable::<component::Collider>();
+    
+    app    
         .add_event::<ScoredEvent>()
         .add_event::<PaddleCollisionEvent>()
         .add_event::<StartPunchEvent>()
@@ -75,6 +81,6 @@ fn main() {
         .add_system_set(SystemSet::on_enter(GameState::Won).with_system(system::setup_won))
         .add_system_set(SystemSet::on_update(GameState::Won).with_system(system::restart_on_space))
         .add_system_set(SystemSet::on_enter(GameState::Lost).with_system(system::setup_lost))
-        .add_system_set(SystemSet::on_update(GameState::Lost).with_system(system::restart_on_space))
-        .run();
+        .add_system_set(SystemSet::on_update(GameState::Lost).with_system(system::restart_on_space));
+    app.run();
 }
