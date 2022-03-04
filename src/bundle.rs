@@ -1,6 +1,6 @@
-use bevy::prelude::*;
-use bevy_prototype_lyon::{prelude::*, entity::ShapeBundle};
 use crate::component;
+use bevy::prelude::*;
+use bevy_prototype_lyon::{entity::ShapeBundle, prelude::*};
 
 #[derive(Bundle)]
 pub struct PaddleBundle {
@@ -15,24 +15,22 @@ pub struct PaddleBundle {
 impl PaddleBundle {
     pub fn new(side: component::Side) -> Self {
         let (paddle_shape, x, collider) = match side {
-            component::Side::Left => {
-                (shapes::Rectangle {
-                        extents: Vec2::new(5.0, 20.0),
-                        origin: RectangleOrigin::Center,
-                    },
-                    -450.,
-                    component::Collider::new(5.0, 15.0),
-                )
-            },
-            component::Side::Right => {
-                (shapes::Rectangle {
-                        extents: Vec2::new(5.0, 100.0),
-                        origin: RectangleOrigin::Center,
-                    },
-                    450.,
-                    component::Collider::new(5.0, 50.0),
-                )
-            },
+            component::Side::Left => (
+                shapes::Rectangle {
+                    extents: Vec2::new(5.0, 20.0),
+                    origin: RectangleOrigin::Center,
+                },
+                -450.,
+                component::Collider::new(5.0, 15.0),
+            ),
+            component::Side::Right => (
+                shapes::Rectangle {
+                    extents: Vec2::new(5.0, 100.0),
+                    origin: RectangleOrigin::Center,
+                },
+                450.,
+                component::Collider::new(5.0, 50.0),
+            ),
         };
         PaddleBundle {
             shape_bundle: GeometryBuilder::build_as(
@@ -118,7 +116,7 @@ impl BallBundle {
             extents: Vec2::new(5.0, 5.0),
             origin: RectangleOrigin::Center,
         };
-        BallBundle { 
+        BallBundle {
             shape_bundle: GeometryBuilder::build_as(
                 &ball_shape,
                 DrawMode::Fill(FillMode::color(Color::WHITE)),
@@ -138,5 +136,3 @@ pub struct ParticleBundle {
     pub velocity: component::Velocity,
     pub ttl: component::TimeToLive,
 }
-
-

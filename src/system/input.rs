@@ -1,6 +1,6 @@
-use bevy::prelude::*;
 use crate::component;
 use crate::resource;
+use bevy::prelude::*;
 
 pub fn user_input(
     mut query: Query<&mut component::Velocity, With<component::Player>>,
@@ -12,7 +12,8 @@ pub fn user_input(
 ) {
     for mut velocity in query.iter_mut() {
         if keyboard.pressed(KeyCode::W) {
-            velocity.velocity.y = game_globals.paddle_max_speed 
+            velocity.velocity.y = game_globals
+                .paddle_max_speed
                 .min(velocity.velocity.y + game_globals.paddle_acceleration * time.delta_seconds());
         }
         if keyboard.pressed(KeyCode::S) {
@@ -20,7 +21,9 @@ pub fn user_input(
                 .max(velocity.velocity.y - game_globals.paddle_acceleration * time.delta_seconds());
         }
         if keyboard.just_pressed(KeyCode::D) {
-            start_punch_event_writer.send(crate::StartPunchEvent {side: component::Side::Left});
+            start_punch_event_writer.send(crate::StartPunchEvent {
+                side: component::Side::Left,
+            });
         }
         if keyboard.just_pressed(KeyCode::Space) {
             bevy::log::info!("Switch to pause state");

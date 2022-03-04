@@ -1,6 +1,6 @@
+use crate::resource::{self, LetterShapes};
 use bevy::prelude::*;
 use bevy_prototype_lyon::shapes::Polygon;
-use crate::resource::{self, LetterShapes};
 
 pub fn generate_digit_shapes(size: f32) -> resource::DigitShapes {
     resource::DigitShapes {
@@ -171,13 +171,12 @@ pub fn generate_letter_shapes(size: f32) -> resource::LetterShapes {
         },
         s: Polygon {
             points: vec![
-                    Vec2::new(size, size),
-                    Vec2::new(-size, size),
-                    Vec2::new(-size, 0.0),
-                    Vec2::new(size, 0.0),
-                    Vec2::new(size, -size),
-                    Vec2::new(-size, -size),
-                
+                Vec2::new(size, size),
+                Vec2::new(-size, size),
+                Vec2::new(-size, 0.0),
+                Vec2::new(size, 0.0),
+                Vec2::new(size, -size),
+                Vec2::new(-size, -size),
             ],
             closed: false,
         },

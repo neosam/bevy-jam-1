@@ -1,5 +1,5 @@
-use bevy::prelude::*;
 use crate::component;
+use bevy::prelude::*;
 
 pub fn punch_increase(
     mut query: Query<(&mut component::Punch, &component::Side)>,

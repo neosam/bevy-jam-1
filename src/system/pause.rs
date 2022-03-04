@@ -1,9 +1,6 @@
 use bevy::prelude::*;
 
-pub fn pause(
-    mut keyboard: ResMut<Input<KeyCode>>,
-    mut state: ResMut<State<crate::GameState>>,
-) {
+pub fn pause(mut keyboard: ResMut<Input<KeyCode>>, mut state: ResMut<State<crate::GameState>>) {
     if keyboard.just_pressed(KeyCode::Space) {
         bevy::log::info!("Unpause the game");
         keyboard.clear();

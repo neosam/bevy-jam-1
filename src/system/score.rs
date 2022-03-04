@@ -1,11 +1,23 @@
+use crate::{component, resource};
 pub use bevy::prelude::*;
 pub use bevy_prototype_lyon::prelude::*;
-use crate::{component, resource};
 
 pub fn score(
     mut commands: Commands,
-    mut left_query: Query<&mut Path, (With<component::LeftScoreUI>, Without<component::RightScoreUI>)>,
-    mut right_query: Query<&mut Path, (With<component::RightScoreUI>, Without<component::LeftScoreUI>)>,
+    mut left_query: Query<
+        &mut Path,
+        (
+            With<component::LeftScoreUI>,
+            Without<component::RightScoreUI>,
+        ),
+    >,
+    mut right_query: Query<
+        &mut Path,
+        (
+            With<component::RightScoreUI>,
+            Without<component::LeftScoreUI>,
+        ),
+    >,
     balls_query: Query<&component::Ball>,
     mut score_event_reader: EventReader<crate::ScoredEvent>,
     mut score: ResMut<resource::Score>,

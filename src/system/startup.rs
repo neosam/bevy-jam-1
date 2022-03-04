@@ -1,10 +1,9 @@
-use bevy::prelude::*;
-use bevy_prototype_lyon::prelude::*;
 use crate::bundle;
 use crate::component;
 use crate::resource;
 use crate::shapes as gameshapes;
-
+use bevy::prelude::*;
+use bevy_prototype_lyon::prelude::*;
 
 pub fn setup(mut commands: Commands, query: Query<Entity>) {
     bevy::log::info!("Initialize");
@@ -14,13 +13,17 @@ pub fn setup(mut commands: Commands, query: Query<Entity>) {
     let game_globals = resource::GameGlobals::new();
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
-    commands.spawn_bundle(bundle::LeftPaddleBundle::new())
-            .with_children(|parent| {
+    commands
+        .spawn_bundle(bundle::LeftPaddleBundle::new())
+        .with_children(|parent| {
             parent.spawn_bundle(bundle::LeftSecondaryColliderBundle::new());
-        }).insert(Name::new("Left Paddle"));
-    commands.spawn_bundle(bundle::RightPaddleBundle::new())
+        })
+        .insert(Name::new("Left Paddle"));
+    commands
+        .spawn_bundle(bundle::RightPaddleBundle::new())
         .insert(Name::new("Right Paddle"));
-    commands.spawn_bundle(bundle::BallBundle::new(game_globals.ball_init_velocity))
+    commands
+        .spawn_bundle(bundle::BallBundle::new(game_globals.ball_init_velocity))
         .insert(Name::new("Ball"));
 
     let digit_shapes = gameshapes::generate_digit_shapes(50.0);
@@ -45,7 +48,6 @@ pub fn setup(mut commands: Commands, query: Query<Entity>) {
     commands.insert_resource(digit_shapes);
     commands.insert_resource(resource::GameGlobals::new());
 }
-
 
 pub fn setup_won(mut commands: Commands, query: Query<Entity>) {
     bevy::log::info!("You have won!");

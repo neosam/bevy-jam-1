@@ -1,7 +1,7 @@
-use bevy::prelude::*;
 use crate::component;
 use crate::particles;
 use crate::resource;
+use bevy::prelude::*;
 
 pub fn ball_bounds_check(
     mut commands: Commands,
@@ -24,37 +24,62 @@ pub fn ball_bounds_check(
             }
         }
         if transform.translation.x < game_globals.bounds_left {
-            particles::Particles{
+            particles::Particles {
                 amount: 400,
                 min_speed: 3.0,
                 max_speed: 200.0,
                 color: Color::RED,
                 min_time_to_live: 2.0,
                 max_time_to_live: 3.0,
-            }.generate(&mut commands, particles::Random::new(time.time_since_startup().as_secs()), *transform);
+            }
+            .generate(
+                &mut commands,
+                particles::Random::new(time.time_since_startup().as_secs()),
+                *transform,
+            );
             transform.translation.x = 0.0;
             velocity.velocity = game_globals.ball_init_velocity;
-            score_event_writer.send(crate::ScoredEvent { side: component::Side::Right });
+            score_event_writer.send(crate::ScoredEvent {
+                side: component::Side::Right,
+            });
         }
         if transform.translation.x > game_globals.bounds_right {
-            particles::Particles{
+            particles::Particles {
                 amount: 200,
                 min_speed: 30.0,
                 max_speed: 200.0,
                 color: Color::GREEN,
                 min_time_to_live: 2.0,
                 max_time_to_live: 3.0,
-            }.generate(&mut commands, particles::Random::new(time.time_since_startup().as_secs()), *transform);
+            }
+            .generate(
+                &mut commands,
+                particles::Random::new(time.time_since_startup().as_secs()),
+                *transform,
+            );
             transform.translation.x = 0.0;
             velocity.velocity = game_globals.ball_init_velocity;
-            score_event_writer.send(crate::ScoredEvent { side: component::Side::Left });
+            score_event_writer.send(crate::ScoredEvent {
+                side: component::Side::Left,
+            });
         }
     }
 }
 
 pub fn paddle_collision(
-    mut ball_query: Query<(Entity, &mut component::Velocity, &GlobalTransform, &component::Collider), With<component::Ball>>,
-    pedal_query: Query<(&GlobalTransform, &component::Side, &component::Collider), With<component::Paddle>>,
+    mut ball_query: Query<
+        (
+            Entity,
+            &mut component::Velocity,
+            &GlobalTransform,
+            &component::Collider,
+        ),
+        With<component::Ball>,
+    >,
+    pedal_query: Query<
+        (&GlobalTransform, &component::Side, &component::Collider),
+        With<component::Paddle>,
+    >,
     game_globals: Res<resource::GameGlobals>,
     mut paddle_collision_events: EventWriter<crate::PaddleCollisionEvent>,
 ) {
@@ -77,24 +102,32 @@ pub fn paddle_collision(
                     / combined_colliders.dimension.y
                     * std::f32::consts::PI
                     / 4.0;
-                let new_velocity_x =
-                    reflection_angle.cos() * ball_velocity.velocity.length() * game_globals.speed_increase_per_bounce;
-                let new_velocity_y =
-                    -reflection_angle.sin() * ball_velocity.velocity.length() * game_globals.speed_increase_per_bounce;
+                let new_velocity_x = reflection_angle.cos()
+                    * ball_velocity.velocity.length()
+                    * game_globals.speed_increase_per_bounce;
+                let new_velocity_y = -reflection_angle.sin()
+                    * ball_velocity.velocity.length()
+                    * game_globals.speed_increase_per_bounce;
 
                 match *pedal_side {
                     component::Side::Left => {
                         if ball_velocity.velocity.x < 0.0 {
                             ball_velocity.velocity.x = new_velocity_x;
                             ball_velocity.velocity.y = new_velocity_y;
-                            paddle_collision_events.send(crate::PaddleCollisionEvent { side: *pedal_side, ball_entity });
+                            paddle_collision_events.send(crate::PaddleCollisionEvent {
+                                side: *pedal_side,
+                                ball_entity,
+                            });
                         }
                     }
                     component::Side::Right => {
                         if ball_velocity.velocity.x > 0.0 {
                             ball_velocity.velocity.x = -new_velocity_x;
                             ball_velocity.velocity.y = new_velocity_y;
-                            paddle_collision_events.send(crate::PaddleCollisionEvent { side: *pedal_side, ball_entity });
+                            paddle_collision_events.send(crate::PaddleCollisionEvent {
+                                side: *pedal_side,
+                                ball_entity,
+                            });
                         }
                     }
                 }
@@ -104,7 +137,14 @@ pub fn paddle_collision(
 }
 
 pub fn keep_paddle_in_screen(
-    mut query: Query<(&mut Transform, &mut component::Velocity, &component::Collider), With<component::Paddle>>,
+    mut query: Query<
+        (
+            &mut Transform,
+            &mut component::Velocity,
+            &component::Collider,
+        ),
+        With<component::Paddle>,
+    >,
 ) {
     for (mut transform, mut velocity, collider) in query.iter_mut() {
         let upper_border = 300.0 - collider.dimension.y;

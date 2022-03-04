@@ -6,13 +6,12 @@ use bevy_inspector_egui::RegisterInspectable;
 #[cfg(debug_assertions)]
 use bevy_inspector_egui::WorldInspectorPlugin;
 
+mod bundle;
 mod component;
+mod particles;
 mod resource;
 mod shapes;
 mod system;
-mod bundle;
-mod particles;
-
 
 pub struct ScoredEvent {
     pub side: component::Side,
@@ -33,11 +32,9 @@ pub enum GameState {
     Lost,
 }
 
-
 fn main() {
     let mut app = App::new();
-    app
-        .insert_resource(Msaa { samples: 4 })
+    app.insert_resource(Msaa { samples: 4 })
         .insert_resource(ClearColor(Color::BLACK))
         .insert_resource(WindowDescriptor {
             title: "Such an unfair Multiball Pong!  My paddle is too small!!!1".to_string(),
@@ -49,22 +46,20 @@ fn main() {
         .add_plugins(DefaultPlugins)
         .add_plugin(ShapePlugin);
     #[cfg(debug_assertions)]
-    app
-        .add_plugin(WorldInspectorPlugin::new())
+    app.add_plugin(WorldInspectorPlugin::new())
         .register_inspectable::<component::Velocity>()
         .register_inspectable::<component::Punch>()
         .register_inspectable::<component::PunchAnimation>()
         .register_inspectable::<component::Collider>();
-    
-    app    
-        .add_event::<ScoredEvent>()
+
+    app.add_event::<ScoredEvent>()
         .add_event::<PaddleCollisionEvent>()
         .add_event::<StartPunchEvent>()
         .add_system_set(
             SystemSet::on_enter(GameState::InGame)
                 .with_system(system::setup)
-                .with_system(system::setup_ui)
-            )
+                .with_system(system::setup_ui),
+        )
         .add_system_set(
             SystemSet::on_update(GameState::InGame)
                 .with_system(system::update_ui)
@@ -81,12 +76,14 @@ fn main() {
                 .with_system(system::punch::punch_action.before("start_punch"))
                 .with_system(system::ball_bounce_particles)
                 .with_system(system::time_to_live)
-                .with_system(system::punch_particles)
+                .with_system(system::punch_particles),
         )
         .add_system_set(SystemSet::on_update(GameState::Pause).with_system(system::pause))
         .add_system_set(SystemSet::on_enter(GameState::Won).with_system(system::setup_won))
         .add_system_set(SystemSet::on_update(GameState::Won).with_system(system::restart_on_space))
         .add_system_set(SystemSet::on_enter(GameState::Lost).with_system(system::setup_lost))
-        .add_system_set(SystemSet::on_update(GameState::Lost).with_system(system::restart_on_space));
+        .add_system_set(
+            SystemSet::on_update(GameState::Lost).with_system(system::restart_on_space),
+        );
     app.run();
 }

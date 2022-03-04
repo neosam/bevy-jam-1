@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
 
-use crate::{component, bundle};
-
+use crate::{bundle, component};
 
 pub struct Random {
     a: u64,
@@ -49,7 +48,14 @@ impl Particles {
             origin: RectangleOrigin::Center,
         };
         transform.translation.z = 0.0;
-        let Particles { amount, min_speed, max_speed, color , min_time_to_live, max_time_to_live} = *self;
+        let Particles {
+            amount,
+            min_speed,
+            max_speed,
+            color,
+            min_time_to_live,
+            max_time_to_live,
+        } = *self;
         commands.spawn_batch((0..amount).map(move |_| {
             let speed = random.gen_f32_range(min_speed, max_speed);
             let speed_vec = Vec2::new(random.gen_f32() - 0.5, random.gen_f32() - 0.5);
@@ -61,7 +67,7 @@ impl Particles {
                     transform.clone(),
                 ),
                 velocity: (speed_vec.normalize() * speed).into(),
-                ttl: component::TimeToLive { ttl }
+                ttl: component::TimeToLive { ttl },
             }
         }));
     }

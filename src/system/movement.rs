@@ -4,7 +4,11 @@ use crate::component;
 use crate::resource;
 
 pub fn movement(
-    mut query: Query<(&mut component::Velocity, &mut Transform, Option<&component::Damping>)>,
+    mut query: Query<(
+        &mut component::Velocity,
+        &mut Transform,
+        Option<&component::Damping>,
+    )>,
     time: Res<Time>,
     game_globals: Res<resource::GameGlobals>,
 ) {
@@ -13,11 +17,11 @@ pub fn movement(
         transform.translation.y += velocity.velocity.y * time.delta_seconds();
         if damping.is_some() {
             if velocity.velocity.y > 0.0 {
-                velocity.velocity.y =
-                    0.0f32.max(velocity.velocity.y - game_globals.paddle_break * time.delta_seconds());
+                velocity.velocity.y = 0.0f32
+                    .max(velocity.velocity.y - game_globals.paddle_break * time.delta_seconds());
             } else if velocity.velocity.y < 0.0 {
-                velocity.velocity.y =
-                    0.0f32.min(velocity.velocity.y + game_globals.paddle_break * time.delta_seconds());
+                velocity.velocity.y = 0.0f32
+                    .min(velocity.velocity.y + game_globals.paddle_break * time.delta_seconds());
             }
         }
     }
