@@ -1,9 +1,10 @@
 use bevy::prelude::*;
-use bevy_inspector_egui::RegisterInspectable;
+use bevy_prototype_lyon::prelude::*;
 
 #[cfg(debug_assertions)]
+use bevy_inspector_egui::RegisterInspectable;
+#[cfg(debug_assertions)]
 use bevy_inspector_egui::WorldInspectorPlugin;
-use bevy_prototype_lyon::prelude::*;
 
 mod component;
 mod resource;
