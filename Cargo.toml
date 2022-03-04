@@ -6,10 +6,31 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-bevy = "0.6"
 bevy_prototype_lyon = "0.4"
 bevy-inspector-egui = "0.8"
-rand = "0.8.5"
+
+[dependencies.bevy]
+version = "0.6"
+# Disable the default features if there are any that you do not want
+default-features = false
+features = [
+  # These are the default features:
+  # (keep whichever you like)
+  "render",
+  "bevy_winit",
+  #"bevy_gilrs",
+  "x11",
+  # These are other features that may be of interest:
+  # (add any of these that you need)
+  #"subpixel_glyph_atlas",
+  #"dynamic",
+  #"serialize",
+  #"trace",
+  #"trace_tracy",
+  #"trace_chrome",
+  #"wgpu_trace",
+  "wayland"
+]
 
 # Enable optimizations for dependencies (incl. Bevy), but not for our code:
 [profile.dev.package."*"]
