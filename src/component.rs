@@ -32,6 +32,11 @@ impl Velocity {
         }
     }
 }
+impl From<Vec2> for Velocity {
+    fn from(vec2: Vec2) -> Self {
+        Velocity::new(vec2.x, vec2.y)
+    }
+}
 
 #[derive(Component, Inspectable)]
 pub struct Punch {
@@ -97,3 +102,8 @@ pub struct RightScoreUI;
 
 #[derive(Component)]
 pub struct StrengthUI;
+
+#[derive(Component)]
+pub struct TimeToLive {
+    pub ttl: f32,
+}

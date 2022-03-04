@@ -131,4 +131,12 @@ impl BallBundle {
     }
 }
 
+#[derive(Bundle)]
+pub struct ParticleBundle {
+    #[bundle]
+    pub shape_bundle: ShapeBundle,
+    pub velocity: component::Velocity,
+    pub ttl: component::TimeToLive,
+}
+
 

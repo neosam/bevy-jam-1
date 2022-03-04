@@ -3058,6 +3058,7 @@ dependencies = [
  "bevy",
  "bevy-inspector-egui",
  "bevy_prototype_lyon",
+ "rand",
 ]
 
 [[package]]

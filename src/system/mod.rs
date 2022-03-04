@@ -7,6 +7,7 @@ pub mod movement;
 pub mod pause;
 pub mod punch;
 pub mod ui;
+pub mod particle;
 
 pub use ai::ai;
 pub use collision::ball_bounds_check;
@@ -22,3 +23,6 @@ pub use movement::movement;
 pub use pause::pause;
 pub use ui::setup_ui;
 pub use ui::update_ui;
+pub use particle::ball_bounce_particles;
+pub use particle::time_to_live;
+pub use particle::punch_particles;

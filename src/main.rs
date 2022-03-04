@@ -11,6 +11,7 @@ mod resource;
 mod shapes;
 mod system;
 mod bundle;
+mod particles;
 
 
 pub struct ScoredEvent {
@@ -18,6 +19,7 @@ pub struct ScoredEvent {
 }
 pub struct PaddleCollisionEvent {
     pub side: component::Side,
+    pub ball_entity: Entity,
 }
 pub struct StartPunchEvent {
     pub side: component::Side,
@@ -77,6 +79,9 @@ fn main() {
                 .with_system(system::punch::punch_increase)
                 .with_system(system::punch::start_punch.label("start_punch"))
                 .with_system(system::punch::punch_action.before("start_punch"))
+                .with_system(system::ball_bounce_particles)
+                .with_system(system::time_to_live)
+                .with_system(system::punch_particles)
         )
         .add_system_set(SystemSet::on_update(GameState::Pause).with_system(system::pause))
         .add_system_set(SystemSet::on_enter(GameState::Won).with_system(system::setup_won))
